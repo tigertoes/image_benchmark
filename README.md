@@ -1,4 +1,4 @@
-#
+# Image Benchmarker
 
 The goal of this codebase is to be a harness to provide benchmarking of raster
 image formats specifically for web use cases to allow for both objective and
@@ -9,8 +9,8 @@ particular format.
 
 ## Quick start
 
-    git clone --recurse-submodules
-    cd 
+    git clone --recurse-submodules https://github.com/tigertoes/image_benchmark.git
+    cd image_benchmark
     docker-compose up
 
 ### Current supported formats and codecs:
@@ -34,9 +34,9 @@ compile everything.
 
 ## Running
 Put your test assets (JPG, PNG, and TIFF are supported, but certain codecs will
-only use specific types) into `source/`, then running `docker-compose up`. Each
-of the encoders will run, dumping their files into `output`, and the UI
-container remaining running - use Ctrl+C to kill it.
+only use specific types) into `source/`, then run `docker-compose up`. Each of
+the encoders will run, dumping their files into `output`, and the UI container
+remaining running - use Ctrl+C to kill it.
 
 ## Analysis
 The harness exposes a web service at
@@ -46,9 +46,7 @@ This front end will attempt to natively render images if available, otherwise
 falling back to provided decoders.
 
 ## Thanks
-A lot of this codebase was inspired by
-[](https://github.com/WyohKnott/image-formats-comparison) and
+A lot of this codebase was inspired by [https://github.com/WyohKnott/image-formats-comparison](https://github.com/WyohKnott/image-formats-comparison) and many others.
 
-## Contributing
-If you are supplying additional encoders please be wearing of matching existing
-conventions, and that improving current standards should be han
+## License
+Apache 2. Please see the LICENSE file included with this source code.

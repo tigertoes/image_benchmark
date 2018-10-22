@@ -74,33 +74,28 @@ class SampleLoader {
       window.sampleLoader.codecTest = {};
       var codecTest = window.sampleLoader.codecTest;
 
-      for(var type in window.sampleLoader.supportedTypes) {
-        // I don't care about testing existing
-        if(window.sampleLoader.supportedTypes[type].nativeSupported === true) continue;
+      Object.keys(window.sampleLoader.supportedTypes).forEach(type => {
+        var supportedTypes = window.sampleLoader.supportedTypes;
+        if(supportedTypes[type].nativeSupported === true) return;
 
         codecTest[type] = new Image();
-        codecTest[type].src = window.sampleLoader.supportedTypes[type].testImage;
-
-        // FIXME: Why does this fire with "pik" three times?!
         codecTest[type].onload = codecTest[type].onerror = function() {
           // Prioritise native decoding of image formats over using a JS shim
           if(codecTest[type].width && codecTest[type].width >= 1) {
-            window.sampleLoader.supportedTypes[type].nativeSupported = true;
-          } else if (window.sampleLoader.supportedTypes[type].decoder) {
-            var head = document.getElementsByTagName('head')[0],
+            supportedTypes[type].nativeSupported = true;
+          } else if (supportedTypes[type].decoder) {
+            var head   = document.getElementsByTagName('head')[0],
                 script = document.createElement('script');
             script.type = 'text/javascript';
-            script.onload = callback;
-            script.src = url;
+            script.src = supportedTypes[type].decoder;
             head.appendChild(script);
-
-          } else {
-
           }
-        };
-        console.log(codecTest[type].onerror);
 
-      }
+        };
+
+        codecTest[type].src = supportedTypes[type].testImage;
+      });
+
       resolve();
     });
   }

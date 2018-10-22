@@ -1,0 +1,40 @@
+version: '3'
+
+services:
+  viewer:
+    build: './viewer'
+    ports:
+      - '8080:80'
+    volumes:
+      - './output:/output'
+      - './viewer:/viewer'
+  original:
+    build: './codec/original'
+    volumes:
+      - './source:/source:ro'
+      - './output:/output'
+  pik:
+    build: './codec/pik'
+    volumes:
+      - './source:/source:ro'
+      - './output:/output'
+  guetzli:
+    build: './codec/guetzli'
+    volumes:
+      - './source:/source:ro'
+      - './output:/output'
+  webp:
+    build: './codec/webp'
+    volumes:
+      - './source:/source:ro'
+      - './output:/output'
+  imagemagick:
+    build: './codec/imagemagick'
+    volumes:
+      - './source:/source:ro'
+      - './output:/output'
+  bpg:
+    build: './codec/bpg'
+    volumes:
+      - './source:/source:ro'
+      - './output:/output'

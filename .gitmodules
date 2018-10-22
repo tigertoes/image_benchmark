@@ -1,0 +1,3 @@
+[submodule "viewer/src/js/pica"]
+	path = viewer/src/js/pica
+	url = https://github.com/nodeca/pica

@@ -35,7 +35,7 @@ class SampleLoader {
         'description': "Fabrice Bellard's BPG",
         'nativeSupported': false,
         'worker': false,
-        'decoder' : 'js/codec/bpgdec-0.9.4.js',
+        'decoder' : 'js/codec/bpgdec.js',
         'testImage': 'data:image/bpg;base64,QlBH+yAAICAAA5JHQEQBwXGBEgAAASYBr+DlCr/7ppY='
       },
       'pik': {
@@ -184,42 +184,72 @@ class SampleLoader {
   }
 
   /**
-   * Render the image on a given side using the browser's own image processor.
-   * 
-   * This is not done by rendering an image directly, instead we draw it onto
-   * a canvas, and feed that to pica to perform a Lanczos2 resampling (as 3
-   * is apparently quite slow, and browser canvas resampling is blurry).
+   * Load a natively supported image into a canvas
    * @param {String} url absolute path to download
    * @param {String} side in which to place the image
    */
   loadNativeImage(url, side) {
     var canInput   = document.createElement('canvas'),
-        canOutput  = document.createElement('canvas'),
-        canDisplay = document.getElementById(`${side}Container`);
+        canOutput  = document.createElement('canvas');
 
     var inputCtx = canInput.getContext('2d'),
         img = new Image();
 
     img.src = url;
     img.onload = function() {
-      canInput.width  = img.width;
-      canInput.height = img.height;
+      canInput.width  = canOutput.width  = img.width;
+      canInput.height = canOutput.height = img.height;
       inputCtx.drawImage(img, 0, 0);
-
-      canOutput.height = img.width;
-      canOutput.width  = img.height;
-
-      window.sampleLoader.pica.resize(canInput, canOutput, {
-        quality: 2,
-        alpha: false,
-        unsharpAmount: 0,
-        unsharpThreshold: 0,
-        transferable: true })
-        .then(function() {
-          canDisplay.style.backgroundImage = `url("${canOutput.toDataURL('image/png')}")`;
-      });
+      window.sampleLoader.resizeAndRender(canInput, canOutput, side);
     }
 
+  }
+
+  /**
+   * Load a BPG image into the canvas
+   * @param {String} url absolute path to download
+   * @param {String} side in which to place the image
+   */
+  loadBPG(url, side) {
+    var canInput   = document.createElement('canvas'),
+        canOutput  = document.createElement('canvas');
+    var ctx = canInput.getContext('2d');
+    var bpg = new BPGDecoder(ctx);
+    bpg.onload = function () {
+        canInput.width  = canOutput.width  = this.imageData.width;
+        canInput.height = canOutput.height = this.imageData.height;
+        ctx.putImageData(this.imageData, 0, 0);
+        window.sampleLoader.resizeAndRender(canInput, canOutput, side);
+    };
+    bpg.load(url);
+  }
+
+  /**
+   * Resize (using Lanczos2) and render the image into the frame
+   *
+   * Among the various harnesses that inspired this codebase, a common theme is
+   * for them to render images in brwoser this way - by performing a resample of
+   * the image to fit it correctly, then taking the bitmap data out as lossless
+   * PNG and sticking it into the background of a `<div>` element. This is
+   * important, as it means we are also beholden to the browser's ability to do
+   * that last piece of processing, and that the final denominator is PNG, no
+   * matter the source.
+   *
+   * @param {Canvas} canInput the input canvas the resize reads from
+   * @param {Canvas} canOutput the canvas to output the resized value onto
+   * @param {String} side to load it on
+   */
+  resizeAndRender(canInput, canOutput, side) {
+    var canDisplay = document.getElementById(`${side}Container`);
+    window.sampleLoader.pica.resize(canInput, canOutput, {
+      quality: 2,
+      alpha: false,
+      unsharpAmount: 0,
+      unsharpThreshold: 0,
+      transferable: true })
+      .then(function() {
+        canDisplay.style.backgroundImage = `url("${canOutput.toDataURL('image/png')}")`;
+    });
   }
 
   /**
@@ -243,7 +273,7 @@ class SampleLoader {
     } else if (typeDetails.worker) {
       // TODO
     } else if (type === 'bpg') {
-      // TODO
+      window.sampleLoader.loadBPG(this.value, side);
     } else {
       console.warn("I don't know what to do with this format!");
       return;

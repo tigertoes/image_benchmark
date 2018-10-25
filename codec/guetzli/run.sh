@@ -14,7 +14,7 @@ exec 19>${OUT_DIR}/output.log;
 export BASH_XTRACEFD="19";
 
 (time {
-    for image in ${SRC_DIR}/*.jpg; do
+    for image in ${SRC_DIR}/*.{jpg,png}; do
         if [ ! -f ${image} ]; then continue; fi;
         output_file=${image##*/};
         bin/Release/guetzli --verbose --quality 90 $image "${OUT_DIR}/${output_file}";

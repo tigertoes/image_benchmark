@@ -19,24 +19,23 @@ body {
 }
 
 #viewer {
-  width: 800px;
-  height: 800px;
+  min-height: 800px;
+  display: flex;
+  justify-content: center;
 }
 
 #rightSideContainer {
-  margin-left: auto;
-  margin-right: auto;
-  position: relative;
-  background-repeat: no-repeat;
+  margin: auto;
   opacity: 1;
 }
 
 #leftSideContainer, #rightSideContainer, #middleContainer {
   width: 800px;
   height: 800px;
+  background-repeat: no-repeat;
 }
 
-#middleContainer, #leftSideContainer {
+#leftSideContainer {
   border-right: 1px dotted #000;
 }
 

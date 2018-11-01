@@ -76,7 +76,7 @@ class SampleLoader {
    * @returns {Promise} that will update the `nativeSupported` values
    */
   confirmCodecSupport() {
-    return new Promise(function(resolve, reject) {
+    return new Promise((resolve, reject) => {
       window.sampleLoader.codecTest = {};
       var codecTest = window.sampleLoader.codecTest;
 
@@ -85,7 +85,7 @@ class SampleLoader {
         if(supportedTypes[type].nativeSupported === true) return;
 
         codecTest[type] = new Image();
-        codecTest[type].onload = codecTest[type].onerror = function() {
+        codecTest[type].onload = codecTest[type].onerror = () => {
           // Prioritise native decoding of image formats over using a JS shim
           if(codecTest[type].width && codecTest[type].width >= 1) {
             supportedTypes[type].nativeSupported = true;
@@ -164,7 +164,7 @@ class SampleLoader {
     var dirs = files.shift()[0];
     var supportedTypes = this.supportedTypes;
 
-    return new Promise(function(resolve, reject){
+    return new Promise((resolve, reject) => {
 
       document.querySelectorAll('#leftSide, #rightSide').forEach(menu => {
         for(var i=0; i<dirs.length; i++){
@@ -213,7 +213,7 @@ class SampleLoader {
         img = new Image();
 
     img.src = url;
-    img.onload = function() {
+    img.onload = () => {
       canInput.width  = canOutput.width  = img.width;
       canInput.height = canOutput.height = img.height;
       inputCtx.drawImage(img, 0, 0);
@@ -232,7 +232,7 @@ class SampleLoader {
         canOutput  = document.createElement('canvas');
     var ctx = canInput.getContext('2d');
     var bpg = new BPGDecoder(ctx);
-    bpg.onload = function () {
+    bpg.onload = function() {
         canInput.width  = canOutput.width  = this.imageData.width;
         canInput.height = canOutput.height = this.imageData.height;
         ctx.putImageData(this.imageData, 0, 0);
@@ -264,7 +264,7 @@ class SampleLoader {
       unsharpAmount: 0,
       unsharpThreshold: 0,
       transferable: true })
-      .then(function() {
+      .then(() => {
         canDisplay.style.backgroundImage = `url("${canOutput.toDataURL('image/png')}")`;
     });
   }
@@ -330,7 +330,7 @@ class SampleLoader {
    */
   setSplit(offset) {
     if(this.splitTimer) return;
-    this.splitTimer = setInterval(function() {
+    this.splitTimer = setInterval(() => {
       var sl = window.sampleLoader;
       sl.splitStep.x *= .5;
       sl.splitStep.y *= .5;
@@ -352,9 +352,6 @@ class SampleLoader {
       infoTextLeft.style.top = (sl.split.y < 83 ? 83 : sl.split.y) + "px";
       infoTextRight.style.right = (offset.height - sl.split.x) + "px";
       infoTextRight.style.top = (sl.split.y < 83 ? 83 : sl.split.y) + "px";
-
-      //infoTextLeft.innerHTML = `Left<br>Offset: ${offset.height}<br>`;
-      //infoTextRight.innerHTML = `Right<br>Offset: ${offset.height}<br>`;
 
       if (sl.split.x === sl.target.x && sl.split.y === sl.target.y) {
         clearInterval(this.splitTimer);
@@ -382,7 +379,7 @@ class SampleLoader {
 }
 
 
-window.addEventListener('load', function(){
+window.addEventListener('load', () => {
   window.pica.WW = true; // Enable WebWorkers
 
   window.sampleLoader = new SampleLoader();

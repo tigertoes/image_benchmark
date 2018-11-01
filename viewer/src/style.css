@@ -1,5 +1,6 @@
 body {
   max-width: 100%;
+  font-family: sans-serif;
 }
 
 .container {
@@ -43,3 +44,10 @@ canvas {
   display: none;
 }
 
+#leftSideInfoText, #rightSideInfoText {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  padding: 0.2em 0.5em;
+  border: 1px dotted #ccc;
+}

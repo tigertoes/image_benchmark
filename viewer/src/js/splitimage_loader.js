@@ -45,6 +45,12 @@ class SampleLoader {
       },
     };
 
+    // List of all the images
+    // key is the path to the file
+    // `size`: in bytes
+    // `codec`: which codec (not file type) generated
+    this.images = {}
+
     // Timer used by {@Link setSplit()} for updating split
     this.splitTimer = undefined;
 
@@ -172,10 +178,21 @@ class SampleLoader {
           menu.appendChild(group);
           fi.forEach(file => {
             if(file.name.endsWith('.log')) return;
+
+            // Update the menu list
             var fileEl = document.createElement('option');
-            fileEl.setAttribute('value', `/output/${dir}/${file.name}`);
+            let path = `/output/${dir}/${file.name}`;
+            fileEl.setAttribute('value', path);
             fileEl.text = file.name;
             group.appendChild(fileEl);
+
+            // Update the image metadata
+            // FIXME: Esoteric filenames may make this blow up :{
+            window.sampleLoader.images[path] = {
+              size:  file.size,
+              codec: dir
+            };
+
           })
         }
       });
@@ -279,6 +296,13 @@ class SampleLoader {
       return;
     }
 
+    let info = document.getElementById(`${side}InfoText`);
+    var hoverText = '';
+    Object.keys(window.sampleLoader.images[this.value]).forEach(key => {
+      hoverText += `${key}: ${window.sampleLoader.images[this.value][key]}</br>`;
+      info.innerHTML = hoverText;
+    });
+
   }
 
   /**
@@ -297,13 +321,14 @@ class SampleLoader {
       x: targetX,
       y: targetY
     };
-    window.sampleLoader.setSplit();
+    window.sampleLoader.setSplit(offset);
   }
 
   /**
    * Update timer for the view split so we don't have to
+   * @param offset
    */
-  setSplit() {
+  setSplit(offset) {
     if(this.splitTimer) return;
     this.splitTimer = setInterval(function() {
       var sl = window.sampleLoader;
@@ -319,6 +344,18 @@ class SampleLoader {
       if (Math.abs(sl.split.y - sl.target.y) < .5) sl.split.y = sl.target.y;
       document.getElementById('leftSideContainer').style.width
         = `${sl.split.x}px`;
+
+      let infoTextLeft  = document.getElementById('leftSideInfoText'),
+          infoTextRight = document.getElementById('rightSideInfoText');
+
+      infoTextLeft.style.right = ((offset.height + (infoTextLeft.clientWidth)*2) - sl.split.x) + "px";
+      infoTextLeft.style.top = (sl.split.y < 83 ? 83 : sl.split.y) + "px";
+      infoTextRight.style.right = (offset.height - sl.split.x) + "px";
+      infoTextRight.style.top = (sl.split.y < 83 ? 83 : sl.split.y) + "px";
+
+      //infoTextLeft.innerHTML = `Left<br>Offset: ${offset.height}<br>`;
+      //infoTextRight.innerHTML = `Right<br>Offset: ${offset.height}<br>`;
+
       if (sl.split.x === sl.target.x && sl.split.y === sl.target.y) {
         clearInterval(this.splitTimer);
         this.splitTimer = null;

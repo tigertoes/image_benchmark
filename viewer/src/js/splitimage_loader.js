@@ -224,6 +224,9 @@ class SampleLoader {
 
   /**
    * Load a BPG image into the canvas
+   *
+   * Unlike other decoders, the BPG decoder expects you to provide it a canvas
+   * element call `.putImageData` with its decoder.
    * @param {String} url absolute path to download
    * @param {String} side in which to place the image
    */

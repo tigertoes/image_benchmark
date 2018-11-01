@@ -46,7 +46,7 @@ canvas {
 
 #leftSideInfoText, #rightSideInfoText {
   position: absolute;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(0, 0, 0, 1);
   color: #fff;
   padding: 0.2em 0.5em;
   border: 1px dotted #ccc;
